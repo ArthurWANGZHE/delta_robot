@@ -19,6 +19,10 @@ using System.Reflection;
 
 namespace delta_robot
 {
+
+
+    //初始化设置
+
     public partial class Form1 : Form
     {
         int[] m_encp = new int[Global.MAX_NAXIS];
@@ -223,6 +227,29 @@ namespace delta_robot
 
         }
 
+
+
+        //默认配置脉冲宽度
+        private void button25_Click(object sender, EventArgs e)
+        {
+            int i;
+            for (i = 0; i < 3; i++)
+            {
+                IMC_Pkg.PKG_IMC_ClearIMC(Global.g_handle);
+                IMC_Pkg.PKG_IMC_ClearAxis(Global.g_handle, i);
+                IMC_Pkg.PKG_IMC_SetPulWidth(Global.g_handle, 4000, i);            //4000:有效电平脉冲宽度
+                IMC_Pkg.PKG_IMC_SetPulPolar(Global.g_handle, 1, 1, i);
+                IMC_Pkg.PKG_IMC_SetEncpEna(Global.g_handle, 0, i);
+                IMC_Pkg.PKG_IMC_SetVelAccLim(Global.g_handle, 200, 200, i);   //极限速度、极限加速度
+                IMC_Pkg.PKG_IMC_Setlimit(Global.g_handle, 1, 0, 1, 0, i);
+                IMC_Pkg.PKG_IMC_SetAlm(Global.g_handle, 0, 0, i);
+                IMC_Pkg.PKG_IMC_SetEmstopPolar(Global.g_handle, 0);             //急停输入端有效极性，0为低电平有效
+                IMC_Pkg.PKG_IMC_SetStopfilt(Global.g_handle, 1, i);
+                IMC_Pkg.PKG_IMC_SetExitfilt(Global.g_handle, 0, i);
+                IMC_Pkg.PKG_IMC_SetEna(Global.g_handle, 1, i);
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             int i;
@@ -267,6 +294,16 @@ namespace delta_robot
         }
 
 
+
+
+
+
+
+
+
+
+
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -282,6 +319,10 @@ namespace delta_robot
 
         }
 
+
+
+
+        //点到点运动
         private void button15_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
@@ -328,6 +369,8 @@ namespace delta_robot
         }
 
 
+
+        //0轴正向运动
         private void button3_MouseDown(object sender, MouseEventArgs e)
         {
 
@@ -345,13 +388,14 @@ namespace delta_robot
 
 
         }
-
+        //0轴停止
         private void button3_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 0;                                           
             IMC_Pkg.PKG_IMC_MoveVel(Global.g_handle, 0, 0, axis);   
         }
 
+        //0轴负向运动
         private void button4_MouseDown(object sender, MouseEventArgs e)
         {
             
@@ -370,12 +414,16 @@ namespace delta_robot
             }
         }
 
+
+        //0轴停止
         private void button4_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 0;
             IMC_Pkg.PKG_IMC_MoveVel(Global.g_handle, 0, 0, axis);
         }
 
+
+        //1轴正向运动
         private void button5_MouseDown(object sender, MouseEventArgs e)
         {
             
@@ -394,6 +442,8 @@ namespace delta_robot
             }
         }
 
+
+        //1轴停止
         private void button5_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 1;
@@ -401,6 +451,8 @@ namespace delta_robot
 
         }
 
+
+        //1轴负向运动
         private void button6_MouseDown(object sender, MouseEventArgs e)
         {
            
@@ -419,12 +471,16 @@ namespace delta_robot
             }
         }
 
+
+        //1轴停止
         private void button6_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 1;
             IMC_Pkg.PKG_IMC_MoveVel(Global.g_handle, 0, 0, axis);
         }
 
+
+        //2轴正向运动
         private void button7_MouseDown(object sender, MouseEventArgs e)
         {
        
@@ -443,6 +499,8 @@ namespace delta_robot
             }
         }
 
+
+        //2轴停止
         private void button7_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 2;
@@ -450,6 +508,8 @@ namespace delta_robot
 
         }
 
+
+        //2轴负向运动
         private void button8_MouseDown(object sender, MouseEventArgs e)
         {
          
@@ -468,12 +528,16 @@ namespace delta_robot
             }
         }
 
+
+        //2轴停止
         private void button8_MouseUp(object sender, MouseEventArgs e)
         {
             int axis = 2;
             IMC_Pkg.PKG_IMC_MoveVel(Global.g_handle, 0, 0, axis);
 
         }
+
+
 
         private void textBox7_TextChanged(object sender, EventArgs e)
         {
@@ -495,12 +559,14 @@ namespace delta_robot
 
         }
 
-        private void button18_Click(object sender, EventArgs e)
+        private void button18_Click_1(object sender, EventArgs e)
         {
 
         }
 
-        private void button18_Click_1(object sender, EventArgs e)
+
+        //末端执行器x轴寸动_正向
+        private void button18_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
@@ -555,6 +621,8 @@ namespace delta_robot
 
         }
 
+
+        //末端执行器x轴寸动_负向
         private void button21_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
@@ -600,13 +668,15 @@ namespace delta_robot
             textBox9.Text = z2.ToString();
         }
 
+
+        //末端执行器y轴寸动_正向
         private void button19_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
             double z1 = Convert.ToDouble(textBox9.Text);
             double distance = Convert.ToDouble(textBox11.Text);
-            double x2 = x1;                                  //x轴寸动
+            double x2 = x1;                                  
             double y2 = y1 + distance;
             double z2 = z1;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
@@ -645,13 +715,15 @@ namespace delta_robot
             textBox9.Text = z2.ToString();
         }
 
+
+        //末端执行器y轴寸动_负向
         private void button22_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
             double z1 = Convert.ToDouble(textBox9.Text);
             double distance = Convert.ToDouble(textBox11.Text);
-            double x2 = x1;                                  //x轴寸动
+            double x2 = x1;                                  
             double y2 = y1 - distance;
             double z2 = z1;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
@@ -690,13 +762,15 @@ namespace delta_robot
             textBox9.Text = z2.ToString();
         }
 
+
+        //末端执行器z轴寸动_正向
         private void button20_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
             double z1 = Convert.ToDouble(textBox9.Text);
             double distance = Convert.ToDouble(textBox11.Text);
-            double x2 = x1;                                  //x轴寸动
+            double x2 = x1;                                  
             double y2 = y1;
             double z2 = z1 - distance;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
@@ -735,13 +809,15 @@ namespace delta_robot
             textBox9.Text = z2.ToString();
         }
 
+
+        //末端执行器z轴寸动_负向
         private void button23_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
             double z1 = Convert.ToDouble(textBox9.Text);
             double distance = Convert.ToDouble(textBox11.Text);
-            double x2 = x1;                                  //x轴寸动
+            double x2 = x1;                                  
             double y2 = y1;
             double z2 = z1 + distance;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
@@ -780,6 +856,8 @@ namespace delta_robot
             textBox9.Text = z2.ToString();
         }
 
+
+        //归零复位
         private void button24_Click(object sender, EventArgs e)
         {
             IMC_Pkg.PKG_IMC_Emstop(Global.g_handle, 0);
@@ -795,6 +873,8 @@ namespace delta_robot
 
         }
 
+
+        //末端执行器x轴点动_正向
         private void button9_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -843,26 +923,15 @@ namespace delta_robot
             flag = 0;
         }
 
-        private void button18_MouseUp(object sender, MouseEventArgs e)
-        {
 
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        //末端执行器x轴点动_停止
         private void button9_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
 
+
+        //末端执行器x轴点动_负向
         private void button10_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -911,11 +980,15 @@ namespace delta_robot
             flag = 0;
         }
 
+
+        //末端执行器x轴点动_停止
         private void button10_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
 
+
+        //末端执行器y轴点动_正向
         private void button11_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -964,11 +1037,15 @@ namespace delta_robot
             flag = 0;
         }
 
+
+        //末端执行器y轴点动_停止
         private void button11_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
 
+
+        //末端执行器y轴点动_负向
         private void button12_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -1017,11 +1094,15 @@ namespace delta_robot
             flag = 0;
         }
 
+
+        //末端执行器y轴点动_停止
         private void button12_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
 
+
+        //末端执行器z轴点动_正向
         private void button13_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -1070,11 +1151,15 @@ namespace delta_robot
             flag = 0;
         }
 
+
+        //末端执行器z轴点动_停止
         private void button13_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
 
+
+        //末端执行器z轴点动_负向
         private void button14_MouseDown(object sender, MouseEventArgs e)
         {
             flag = 1;
@@ -1123,10 +1208,14 @@ namespace delta_robot
             flag = 0;
         }
 
+
+        //末端执行器z轴点动_停止
         private void button14_MouseUp(object sender, MouseEventArgs e)
         {
             flag = 0;
         }
+
+
 
         private void textBox10_TextChanged_1(object sender, EventArgs e)
         {
@@ -1143,113 +1232,100 @@ namespace delta_robot
 
         }
 
-        private void button25_Click(object sender, EventArgs e)
-        {
-            int i;
-            for (i = 0; i < 3; i++)
-            {
-                IMC_Pkg.PKG_IMC_ClearIMC(Global.g_handle);
-                IMC_Pkg.PKG_IMC_ClearAxis(Global.g_handle, i);
-                IMC_Pkg.PKG_IMC_SetPulWidth(Global.g_handle, 4000, i);            //4000:有效电平脉冲宽度
-                IMC_Pkg.PKG_IMC_SetPulPolar(Global.g_handle, 1, 1, i);
-                IMC_Pkg.PKG_IMC_SetEncpEna(Global.g_handle, 0, i);
-                IMC_Pkg.PKG_IMC_SetVelAccLim(Global.g_handle, 200, 200, i);   //极限速度、极限加速度
-                IMC_Pkg.PKG_IMC_Setlimit(Global.g_handle, 1, 0, 1, 0, i);
-                IMC_Pkg.PKG_IMC_SetAlm(Global.g_handle, 0, 0, i);
-                IMC_Pkg.PKG_IMC_SetEmstopPolar(Global.g_handle, 0);             //急停输入端有效极性，0为低电平有效
-                IMC_Pkg.PKG_IMC_SetStopfilt(Global.g_handle, 1, i);
-                IMC_Pkg.PKG_IMC_SetExitfilt(Global.g_handle, 0, i);
-                IMC_Pkg.PKG_IMC_SetEna(Global.g_handle, 1, i);
-            }
-        }
+
+        //正方形轨迹
 
         private void button26_Click(object sender, EventArgs e)
         {
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
             double z1 = Convert.ToDouble(textBox9.Text);
-            double distance = 50.00;
-            double x2 = x1;                                  //x轴寸动
+
+
+            //第一段路径移动到初始点
+            double x2 = x1;                                  
             double y2 = y1;
-            double z2 = z1 + distance;
+            double z2 = z1 + 50;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
 
 
+            //第二段路径移动到第一个点
             double x3 = x2 - 20;
             double y3 = y2 + 20;
             double z3 = z2;
             var (deltaT11Pulse, deltaT12Pulse, deltaT13Pulse) = robotarm.CoordinateConvertPulse(x2, y2, z2, x3, y3, z3);
 
-            ////
-
+            
+            //下降5mm补偿
             double x04 = x3;
             double y04 = y3;
             double z04 = z3+5;
             var (deltaT021Pulse, deltaT022Pulse, deltaT023Pulse) = robotarm.CoordinateConvertPulse(x3, y3, z3, x04, y04, z04);
 
-            /////
-            ///
+
+            //第三段路径移动到第二个点
             double x4 = x04 +40;
             double y4 = y04 ;
             double z4 = z04;
             var (deltaT21Pulse, deltaT22Pulse, deltaT23Pulse) = robotarm.CoordinateConvertPulse(x04, y04, z04, x4, y4, z4);
 
+
+            //第四段路径移动到第三个点
             double x5 = x4;
             double y5 = y4-40;
             double z5 = z4;
             var (deltaT31Pulse, deltaT32Pulse, deltaT33Pulse) = robotarm.CoordinateConvertPulse(x4, y4, z4, x5, y5, z5);
 
+
+            //第五段路径移动到第四个点
             double x6 = x5 -40;
             double y6 = y5;
             double z6 = z5;
             var (deltaT41Pulse, deltaT42Pulse, deltaT43Pulse) = robotarm.CoordinateConvertPulse(x5, y5, z5, x6, y6, z6);
 
+
+            //第六段路径移动到第五个点(初始点)
             double x7 = x6;
             double y7 = y6+40;
             double z7 = z6;
             var (deltaT51Pulse, deltaT52Pulse, deltaT53Pulse) = robotarm.CoordinateConvertPulse(x6, y6, z6, x7, y7, z7);
 
-            /////
+
+            //上升5mm补偿
             double x07 = x7;
             double y07 = y7;
             double z07 = z7-5;
             var (deltaT051Pulse, deltaT052Pulse, deltaT053Pulse) = robotarm.CoordinateConvertPulse(x7, y7, z7, x07, y07, z07);
 
-            double x8 = x7+20;
-            double y8 = y7 -20;
+
+            //回到原点
+            double x8 = x7 + 20;
+            double y8 = y7 - 20;
             double z8 = z07;
             var (deltaT61Pulse, deltaT62Pulse, deltaT63Pulse) = robotarm.CoordinateConvertPulse(x07, y07, z07, x8, y8, z8);
 
 
             long[,] dist2D = new long[8, 3] // 5段路径，每个轴的移动距离
-{
-    // x1, y1, z1 到 x2, y2, z2
-    //{deltaT1Pulse, deltaT2Pulse, deltaT3Pulse},
-    // x2, y2, z2 到 x3, y3, z3
-    {deltaT11Pulse, deltaT12Pulse, deltaT13Pulse},
+                {
 
-    //
-    {deltaT021Pulse, deltaT022Pulse, deltaT023Pulse },
+                    {deltaT11Pulse, deltaT12Pulse, deltaT13Pulse},
 
+                    {deltaT021Pulse, deltaT022Pulse, deltaT023Pulse},
 
-    // x3, y3, z3 到 x4, y4, z4
-    {deltaT21Pulse, deltaT22Pulse, deltaT23Pulse},
-    // x4, y4, z4 到 x5, y5, z5
-    {deltaT31Pulse, deltaT32Pulse, deltaT33Pulse},
-    // x5, y5, z5 到 x6, y6, z6
-    {deltaT41Pulse, deltaT42Pulse, deltaT43Pulse},
-    // x6, y6, z6 到 x7, y7, z7
-    {deltaT51Pulse, deltaT52Pulse, deltaT53Pulse},
+                    {deltaT21Pulse, deltaT22Pulse, deltaT23Pulse},
 
+                    {deltaT31Pulse, deltaT32Pulse, deltaT33Pulse},
 
-    //
+                    {deltaT41Pulse, deltaT42Pulse, deltaT43Pulse},
 
-    { deltaT051Pulse, deltaT052Pulse, deltaT053Pulse},
+                    {deltaT51Pulse, deltaT52Pulse, deltaT53Pulse},
 
-    {deltaT61Pulse, deltaT62Pulse, deltaT63Pulse }
-};
+                    { deltaT051Pulse, deltaT052Pulse, deltaT053Pulse},
 
+                    {deltaT61Pulse, deltaT62Pulse, deltaT63Pulse }
+                };
 
+            //将二维数组转化为一维数组
             int[] dist = new int[dist2D.Length];
             for (int i = 0; i < dist2D.GetLength(0); i++)
             {
@@ -1260,7 +1336,7 @@ namespace delta_robot
             }
 
 
-
+            //多段轨迹插补
 
             //启用插补空间
             int[] axis = new int[] { 0, 1, 2 };
@@ -1294,23 +1370,36 @@ namespace delta_robot
 
         }
 
+
+
+
+ 
+        //白板逻辑
+
+
         private void whiteboard_Paint(object sender, PaintEventArgs e)
         {
 
         }
 
-        private void button28_Click(object sender, EventArgs e)
-        {
-            whiteboardControl.StopRecording(); // 停止记录
-            MessageBox.Show("轨迹已停止记录并保存。");
-        }
 
+        //开始记录
         private void button27_Click(object sender, EventArgs e)
         {
             whiteboard.StartRecording(); // 开始记录轨迹
             MessageBox.Show("开始记录！");
         }
 
+
+        //停止记录
+        private void button28_Click(object sender, EventArgs e)
+        {
+            whiteboardControl.StopRecording(); // 停止记录
+            MessageBox.Show("轨迹已停止记录并保存。");
+        }
+
+
+        //执行轨迹
         private void button29_Click(object sender, EventArgs e)
         {
             //whiteboard.get_points();
@@ -1320,24 +1409,19 @@ namespace delta_robot
         }
 
 
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void textBox12_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        //运行轨迹
         public void run_points()
         {
+
+            //获取白板轨迹
             var coor = whiteboard.get_paths();
             long[,] dist2D = new long[coor.Count, 3];
 
-
+            //获取第一个点,从原点到第一个点的距离
             var (x0, y0, z0) = coor[0];
-            Console.WriteLine($"1 {x0} {y0}");
+
+            //Console.WriteLine($" {x0} {y0}");
 
             var (deltaT00Pulse, deltaT01Pulse, deltaT02Pulse) = robotarm.CoordinateConvertPulse(0,0,z0, x0, y0, z0);
 
@@ -1346,23 +1430,27 @@ namespace delta_robot
             dist2D[0, 2] = deltaT02Pulse;
 
 
+            //通过for循环,计算后续点之间距离
             for (int i = 0; i < coor.Count - 1; i++)
             {
                 var (x01, y01, z01) = coor[i];
-
-                Console.WriteLine($"{x01} {y01}");
                 var (x02, y02, z02) = coor[i + 1];
+
+                //Console.WriteLine($"{x01} {y01}");
+                
 
                 var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01, y01, z01, x02, y02, z02);
 
-
+                //保存距离
                 dist2D[i+1, 0] = deltaT0Pulse;
                 dist2D[i+1, 1] = deltaT1Pulse;
                 dist2D[i + 1, 2] = deltaT2Pulse;
 
-
             }
+
+            //将二维数组转化为一维数组
             int[] dist = new int[dist2D.Length];
+            Console.WriteLine($"dist is {dist2D.Length}");
             for (int i = 0; i < dist2D.GetLength(0); i++)
             {
                 for (int j = 0; j < dist2D.GetLength(1); j++)
@@ -1372,8 +1460,13 @@ namespace delta_robot
             }
 
             var rowCount=dist2D.GetLength(0);
-            Console.WriteLine($"allpath is {rowCount}");
 
+            //Console.WriteLine($"allpath is {rowCount}");
+
+
+
+
+            //多段轨迹插补
             //启用插补空间
             int[] axis = new int[] { 0, 1, 2 };
             int axisnum = 3;
@@ -1397,17 +1490,12 @@ namespace delta_robot
             double endvel = 0;                                      //末端速度
 
             int wait = 0;
-
             int segNum = rowCount;
 
 
             IMC_Pkg.PKG_IMC_MulLine_Dist(Global.g_handle, dist, axisnum, segNum, tgvel, endvel, wait, fifo);
         }
 
-        private void whiteboard_Paint_1(object sender, PaintEventArgs e)
-        {
-             
-        }
     }
 }
 

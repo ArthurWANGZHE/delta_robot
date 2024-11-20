@@ -93,7 +93,6 @@ namespace delta_robot
             this.button28 = new System.Windows.Forms.Button();
             this.button29 = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.textBox12 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -236,7 +235,7 @@ namespace delta_robot
             this.button9.TabIndex = 12;
             this.button9.Text = "X +";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            //this.button9.Click += new System.EventHandler(this.button9_Click);
             this.button9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button9_MouseDown);
             this.button9.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button9_MouseUp);
             // 
@@ -248,7 +247,7 @@ namespace delta_robot
             this.button10.TabIndex = 13;
             this.button10.Text = "X -";
             this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            //this.button10.Click += new System.EventHandler(this.button10_Click);
             this.button10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button10_MouseDown);
             this.button10.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button10_MouseUp);
             // 
@@ -482,7 +481,7 @@ namespace delta_robot
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(1381, 62);
+            this.button16.Location = new System.Drawing.Point(1130, 62);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(149, 92);
             this.button16.TabIndex = 34;
@@ -492,7 +491,7 @@ namespace delta_robot
             // 
             // button17
             // 
-            this.button17.Location = new System.Drawing.Point(1828, 63);
+            this.button17.Location = new System.Drawing.Point(1632, 64);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(149, 95);
             this.button17.TabIndex = 35;
@@ -532,8 +531,8 @@ namespace delta_robot
             this.button18.TabIndex = 42;
             this.button18.Text = "X +";
             this.button18.UseVisualStyleBackColor = true;
-            this.button18.Click += new System.EventHandler(this.button18_Click_1);
-            this.button18.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button18_MouseUp);
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            //this.button18.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button18_MouseUp);
             // 
             // button19
             // 
@@ -682,7 +681,7 @@ namespace delta_robot
             // 
             // button24
             // 
-            this.button24.Location = new System.Drawing.Point(1595, 63);
+            this.button24.Location = new System.Drawing.Point(1378, 65);
             this.button24.Name = "button24";
             this.button24.Size = new System.Drawing.Size(149, 91);
             this.button24.TabIndex = 58;
@@ -693,9 +692,9 @@ namespace delta_robot
             // panel1
             // 
             this.panel1.Controls.Add(this.whiteboard);
-            this.panel1.Location = new System.Drawing.Point(48, 196);
+            this.panel1.Location = new System.Drawing.Point(77, 167);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(502, 501);
+            this.panel1.Size = new System.Drawing.Size(500, 500);
             this.panel1.TabIndex = 59;
             // 
             // whiteboard
@@ -704,9 +703,9 @@ namespace delta_robot
             this.whiteboard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.whiteboard.Location = new System.Drawing.Point(0, 0);
             this.whiteboard.Name = "whiteboard";
-            this.whiteboard.Size = new System.Drawing.Size(502, 501);
+            this.whiteboard.Size = new System.Drawing.Size(500, 500);
             this.whiteboard.TabIndex = 0;
-            this.whiteboard.Paint += new System.Windows.Forms.PaintEventHandler(this.whiteboard_Paint_1);
+            this.whiteboard.Paint += new System.Windows.Forms.PaintEventHandler(this.whiteboard_Paint);
             // 
             // button26
             // 
@@ -756,25 +755,16 @@ namespace delta_robot
             this.groupBox7.Controls.Add(this.panel1);
             this.groupBox7.Location = new System.Drawing.Point(1053, 200);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(775, 735);
+            this.groupBox7.Size = new System.Drawing.Size(638, 735);
             this.groupBox7.TabIndex = 64;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "绘画";
-            // 
-            // textBox12
-            // 
-            this.textBox12.Location = new System.Drawing.Point(1101, 134);
-            this.textBox12.Name = "textBox12";
-            this.textBox12.Size = new System.Drawing.Size(798, 28);
-            this.textBox12.TabIndex = 66;
-            this.textBox12.TextChanged += new System.EventHandler(this.textBox12_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2051, 947);
-            this.Controls.Add(this.textBox12);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.button26);
             this.Controls.Add(this.button24);
@@ -799,7 +789,6 @@ namespace delta_robot
             this.panel1.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -871,7 +860,6 @@ namespace delta_robot
         private Button button28;
         private Button button29;
         private GroupBox groupBox7;
-        private TextBox textBox12;
     }
 }
 

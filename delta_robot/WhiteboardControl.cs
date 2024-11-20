@@ -101,8 +101,8 @@ namespace delta_robot
 
 
 
-
-        public void get_points()
+        //测试路径点
+        public void get_points()  
         {
             var result= string.Join("; ", allPaths.SelectMany(list => list.Select(point => $"({point.X}, {point.Y})")));
             //var result = string.Join("; ", points.Select(point => $"({point.X}, {point.Y})"));
@@ -123,74 +123,52 @@ namespace delta_robot
 
             Console.WriteLine($"Array is {rows}x{cols}  {x1} {x2} {x3} {x4} {x5} {x6} {x7} {x8} {x9} {x10}");
         }
+
+        //获取路径点
         public List<(double x, double y, double z)> get_paths()
         {
             int rowCount = allPaths.Count;
+
             //Console.WriteLine($"allpath is {rowCount}");
 
+            //创建列表存储路径点
             List<(double x, double y, double z)> coordinates = new List<(double, double, double)>();
-            //var x = allPaths[rowCount-1][0].X / 2;
-            //var y = allPaths[rowCount-1][0].Y / 2;
-
-            var x2 = 0;
-            var y2 = 0;
-
-            //x = x - 90;
-
-            //y= 80 - y;
 
 
+            //获取第一个点保存到列表
+            double x = allPaths[rowCount-1][0].X / 2;
+            double y = allPaths[rowCount-1][0].Y / 2;
+            x = x - 85;
+            y= 85 - y;
+            coordinates.Add((x, y, 60));
 
-            //coordinates.Add((x, y, 60));
 
-            for (int i = 0; i < rowCount; i++)
+            //对后续点进行判断并保存
+            for (int i = 1; i < rowCount; i++)
             {
-                //var(x0, y0, z0) = coordinates[coordinates.Count - 1];
 
+                //获取列表中最后一个点
+                var (x0, y0, z0) = coordinates[coordinates.Count - 1];
 
-                //var x1 = allPaths[rowCount - 1][i - 1].X ;
-                //var y1 = allPaths[rowCount - 1][i - 1].Y ;
+                //获取当前点
+                double x1 = allPaths[rowCount - 1][i - 1].X/2 ;
+                double y1 = allPaths[rowCount - 1][i - 1].Y/2 ;
+                x1 = x1 - 85;
+                y1 = 85 - y1;
 
+                //计算两点之间的距离
+                double distance = Math.Sqrt(Math.Pow(x1 - x0, 2) + Math.Pow(y1 - y0, 2));
 
-                //double distance = Math.Sqrt(Math.Pow(x1 - x0, 2) + Math.Pow(y1 - y0, 2));
-
-                //if (distance > 1)
-                //{
-
-                    x2 = allPaths[rowCount - 1][i].X / 4;
-                    y2 = allPaths[rowCount - 1][i].Y / 4;
-
-
-                        x2 = x2 - 45;
-
-
-                        y2 = 40 - y2;
-
-                    //var (x_, y_, z_) = (allPaths[i][0].X / 4, allPaths[i][0].Y / 4, 60);
-                    coordinates.Add((x2, y2, 60));
-                    //Console.WriteLine($"{x2} {y2}");
-                    //Console.WriteLine($"{x1} {y1}");
-                //}
+                //对距离像进行判断 距离大于1则保存
+                if (distance > 1)
+                {
+                    coordinates.Add((x1, y1, 60));
+                }
             }
             
-
-            
-
-            var coor_counts = coordinates.Count();
+            //var coor_counts = coordinates.Count();
             //Console.WriteLine($"coordinates is {coor_counts}");
             return coordinates;
-        }
-
-
-        public void run_points()
-        {
-            var coor = get_paths();
-            for (int i = 0; i < coor.Count-1; i++)
-            {
-                var (x01, y01, z01) = coor[i];
-                var (x02,y02,z02) = coor[i+1];
-
-            }
         }
     }
 }
