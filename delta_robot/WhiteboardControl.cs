@@ -102,9 +102,9 @@ namespace delta_robot
 
 
         //测试路径点
-        public void get_points()  
+        public void get_points()
         {
-            var result= string.Join("; ", allPaths.SelectMany(list => list.Select(point => $"({point.X}, {point.Y})")));
+            var result = string.Join("; ", allPaths.SelectMany(list => list.Select(point => $"({point.X}, {point.Y})")));
             //var result = string.Join("; ", points.Select(point => $"({point.X}, {point.Y})"));
             var x1 = allPaths[10][1].Y;
             var x2 = allPaths[10][2].Y;
@@ -118,10 +118,16 @@ namespace delta_robot
             var x10 = allPaths[10][10].Y;
 
             int rows = allPaths.Count;
-            int cols = allPaths[0].Count;
+            for (int i = 0; i < rows - 1; i++)
+            {
+                int col0 = allPaths[i].Count;
+                Console.WriteLine($"rows: {rows}, col{i}: {col0}");
+                Console.WriteLine("-------Finish-------");
+            }
 
 
-            Console.WriteLine($"Array is {rows}x{cols}  {x1} {x2} {x3} {x4} {x5} {x6} {x7} {x8} {x9} {x10}");
+
+            //Console.WriteLine($"Array is {rows}x{col0} {col1} {col2} {col3} {col4} 0000 {x1} {x2} {x3} {x4} {x5} {x6} {x7} {x8} {x9} {x10}");
         }
 
         //获取路径点
@@ -136,10 +142,10 @@ namespace delta_robot
 
 
             //获取第一个点保存到列表
-            double x = allPaths[rowCount-1][0].X / 2;
-            double y = allPaths[rowCount-1][0].Y / 2;
+            double x = allPaths[rowCount - 1][0].X / 2;
+            double y = allPaths[rowCount - 1][0].Y / 2;
             x = x - 85;
-            y= 85 - y;
+            y = 85 - y;
             coordinates.Add((x, y, 60));
 
 
@@ -151,8 +157,8 @@ namespace delta_robot
                 var (x0, y0, z0) = coordinates[coordinates.Count - 1];
 
                 //获取当前点
-                double x1 = allPaths[rowCount - 1][i - 1].X/2 ;
-                double y1 = allPaths[rowCount - 1][i - 1].Y/2 ;
+                double x1 = allPaths[rowCount - 1][i - 1].X / 2;
+                double y1 = allPaths[rowCount - 1][i - 1].Y / 2;
                 x1 = x1 - 85;
                 y1 = 85 - y1;
 
@@ -165,10 +171,87 @@ namespace delta_robot
                     coordinates.Add((x1, y1, 60));
                 }
             }
-            
+
             //var coor_counts = coordinates.Count();
             //Console.WriteLine($"coordinates is {coor_counts}");
             return coordinates;
+        }
+
+        //多段轨迹
+        //第一步:找到包含完整轨迹的pointlist
+        public List<List<(double x, double y, double z)>> get_multi_paths()
+        {
+            var index = allPaths.Count;
+            List<int> path_list = new List<int>();
+            for (int i = 1; i < index; i++)
+            {
+                if (allPaths[i].Count == 1)
+                {
+                    path_list.Add(i - 1);
+                    //Console.WriteLine($"ADD: {i - 1} {allPaths[i].Count} ");
+
+                }
+            }
+            path_list.Add(index - 1);
+            //Console.WriteLine($"ADD:{index - 1} {allPaths[index-1].Count}");
+
+            var path_list_num = path_list.Count;
+
+            Console.WriteLine($"轨迹段数量: {path_list_num} ");
+
+
+            //分别读取每一段轨迹的点,并保存到每条轨迹的列表
+            Console.WriteLine("----start----");
+
+            List<List< (double x, double y, double z) >>  multi_paths_points = new List<List<(double, double, double)>>();
+
+            for (int i = 0; i < path_list_num ; i++)
+            {
+
+                Console.WriteLine($"----section{i+1}----");
+                List<(double x, double y, double z)> coordinates = new List<(double, double, double)>();
+                //获取第一个点保存到列表
+                double x = allPaths[path_list[i]][0].X / 2;
+                double y = allPaths[path_list[i]][0].Y / 2;
+                x = x - 85+10;
+                y = 85 - y;
+                coordinates.Add((x, y, 60));
+                Console.WriteLine($"ADD 1: {x} {y} {60}");
+
+                int rowcount = allPaths[path_list[i]].Count;
+                //对后续点进行判断并保存
+                for (int j = 1; j < rowcount; j++)
+                {
+
+                    //获取列表中最后一个点
+                    var (x0, y0, z0) = coordinates[coordinates.Count - 1];
+
+                    //获取当前点
+                    double x1 = allPaths[path_list[i]][j - 1].X / 2;
+                    double y1 = allPaths[path_list[i]][j - 1].Y / 2;
+                    x1 = x1 - 85 +10;
+                    y1 = 85 - y1;
+
+                    //计算两点之间的距离
+                    double distance = Math.Sqrt(Math.Pow(x1 - x0, 2) + Math.Pow(y1 - y0, 2));
+
+                    //对距离像进行判断 距离大于1则保存
+                    if (distance > 1)
+                    {
+                        coordinates.Add((x1, y1, 60));
+
+                        Console.WriteLine($"ADD {j+1}: {x1} {y1} {60}");
+                    }
+ 
+                }
+                multi_paths_points.Add(coordinates);
+                //Console.WriteLine($" 轨迹数量 {multi_paths_points.Count}");
+
+                Console.WriteLine("----Finish----");
+
+            }
+            //Console.WriteLine($" 轨迹数量 {multi_paths_points.Count}");
+            return multi_paths_points;
         }
     }
 }
