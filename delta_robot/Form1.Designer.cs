@@ -87,12 +87,12 @@ namespace delta_robot
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.button24 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.whiteboard = new delta_robot.WhiteboardControl();
             this.button26 = new System.Windows.Forms.Button();
             this.button27 = new System.Windows.Forms.Button();
             this.button28 = new System.Windows.Forms.Button();
             this.button29 = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.whiteboard = new delta_robot.WhiteboardControl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -235,7 +235,6 @@ namespace delta_robot
             this.button9.TabIndex = 12;
             this.button9.Text = "X +";
             this.button9.UseVisualStyleBackColor = true;
-            //this.button9.Click += new System.EventHandler(this.button9_Click);
             this.button9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button9_MouseDown);
             this.button9.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button9_MouseUp);
             // 
@@ -247,7 +246,6 @@ namespace delta_robot
             this.button10.TabIndex = 13;
             this.button10.Text = "X -";
             this.button10.UseVisualStyleBackColor = true;
-            //this.button10.Click += new System.EventHandler(this.button10_Click);
             this.button10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button10_MouseDown);
             this.button10.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button10_MouseUp);
             // 
@@ -532,7 +530,6 @@ namespace delta_robot
             this.button18.Text = "X +";
             this.button18.UseVisualStyleBackColor = true;
             this.button18.Click += new System.EventHandler(this.button18_Click);
-            //this.button18.MouseUp += new System.Windows.Forms.MouseEventHandler(this.button18_MouseUp);
             // 
             // button19
             // 
@@ -697,16 +694,6 @@ namespace delta_robot
             this.panel1.Size = new System.Drawing.Size(500, 500);
             this.panel1.TabIndex = 59;
             // 
-            // whiteboard
-            // 
-            this.whiteboard.BackColor = System.Drawing.Color.White;
-            this.whiteboard.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.whiteboard.Location = new System.Drawing.Point(0, 0);
-            this.whiteboard.Name = "whiteboard";
-            this.whiteboard.Size = new System.Drawing.Size(500, 500);
-            this.whiteboard.TabIndex = 0;
-            this.whiteboard.Paint += new System.Windows.Forms.PaintEventHandler(this.whiteboard_Paint);
-            // 
             // button26
             // 
             this.button26.Location = new System.Drawing.Point(1853, 207);
@@ -759,6 +746,16 @@ namespace delta_robot
             this.groupBox7.TabIndex = 64;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "绘画";
+            // 
+            // whiteboard
+            // 
+            this.whiteboard.BackColor = System.Drawing.Color.White;
+            this.whiteboard.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.whiteboard.Location = new System.Drawing.Point(0, 0);
+            this.whiteboard.Name = "whiteboard";
+            this.whiteboard.Size = new System.Drawing.Size(500, 500);
+            this.whiteboard.TabIndex = 0;
+            this.whiteboard.Paint += new System.Windows.Forms.PaintEventHandler(this.whiteboard_Paint);
             // 
             // Form1
             // 

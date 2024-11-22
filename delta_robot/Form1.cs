@@ -35,7 +35,7 @@ namespace delta_robot
 
 
          
-        RobotArm robotarm = new RobotArm(173, 35, 270,0.001, 100, 100, 100, 0.01);
+        RobotArm robotarm = new RobotArm(173.205, 34, 270,0.001, 100, 100, 100, 0.01);
         WhiteboardControl whiteboardControl = new WhiteboardControl();
 
 
@@ -807,7 +807,7 @@ namespace delta_robot
             double distance = Convert.ToDouble(textBox11.Text);
             double x2 = x1;                                  
             double y2 = y1;
-            double z2 = z1 - distance;
+            double z2 = z1 + distance;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
 
             //启用插补空间
@@ -854,7 +854,7 @@ namespace delta_robot
             double distance = Convert.ToDouble(textBox11.Text);
             double x2 = x1;                                  
             double y2 = y1;
-            double z2 = z1 + distance;
+            double z2 = z1 - distance;
             var (deltaT1Pulse, deltaT2Pulse, deltaT3Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x2, y2, z2);
 
             //启用插补空间
@@ -1261,7 +1261,7 @@ namespace delta_robot
             //下降5mm补偿
             double x04 = x3;
             double y04 = y3;
-            double z04 = z3+5;
+            double z04 = z3-3;
             var (deltaT021Pulse, deltaT022Pulse, deltaT023Pulse) = robotarm.CoordinateConvertPulse(x3, y3, z3, x04, y04, z04);
 
 
@@ -1296,7 +1296,7 @@ namespace delta_robot
             //上升5mm补偿
             double x07 = x7;
             double y07 = y7;
-            double z07 = z7-5;
+            double z07 = z7+3;
             var (deltaT051Pulse, deltaT052Pulse, deltaT053Pulse) = robotarm.CoordinateConvertPulse(x7, y7, z7, x07, y07, z07);
 
 
@@ -1423,11 +1423,14 @@ namespace delta_robot
             var coor = whiteboard.get_paths();
             long[,] dist2D = new long[coor.Count, 3];
 
+            Console.WriteLine($"coor is {coor.Count} +3");
+
+
             //获取第一个点,从原点到第一个点的距离
             var (x0, y0, z0) = coor[0];
             double x1 = Convert.ToDouble(textBox7.Text);
             double y1 = Convert.ToDouble(textBox8.Text);
-            double z1 = 60.00;
+            double z1 = Convert.ToDouble(textBox9.Text);
 
             //Console.WriteLine($" {x0} {y0}");
 
@@ -1447,7 +1450,7 @@ namespace delta_robot
                 //Console.WriteLine($"{x01} {y01}");
                 
 
-                var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01, y01, z01, x02, y02, z02);
+                var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01, y01, z1, x02, y02, z1);
 
                 //保存距离
                 dist2D[i+1, 0] = deltaT0Pulse;
@@ -1456,10 +1459,13 @@ namespace delta_robot
 
             }
 
-            //将二维数组转化为一维数组
-            int[] dist = new int[dist2D.Length];
 
-            Console.WriteLine($"dist is {dist2D.Length}");
+            Console.WriteLine($"dist2D is {dist2D.GetLength(0)}");
+            Console.WriteLine($"dist2D is {dist2D.GetLength(1)}");
+            //将二维数组转化为一维数组
+            int[] dist = new int[dist2D.GetLength(0)* dist2D.GetLength(1)];
+
+            //Console.WriteLine($"dist is {dist2D.Length}");
 
             for (int i = 0; i < dist2D.GetLength(0); i++)
             {
@@ -1471,7 +1477,7 @@ namespace delta_robot
 
             var rowCount=dist2D.GetLength(0);
 
-            Console.WriteLine($"allpath is {rowCount}");
+            //Console.WriteLine($"allpath is {rowCount}");
 
 
 
@@ -1500,13 +1506,13 @@ namespace delta_robot
             double endvel = 0;                                      //末端速度
 
             int wait = 0;
-            int segNum = rowCount;
+            int segNum = dist2D.GetLength(0)/3;
 
 
             IMC_Pkg.PKG_IMC_MulLine_Dist(Global.g_handle, dist, axisnum, segNum, tgvel, endvel, wait, fifo);
 
 
-            var (x2, y2, z2) = coor[coor.Count - 1];
+            var (x2, y2, z2) = coor[coor.Count-1];
             textBox7.Text = x2.ToString();
             textBox8.Text = y2.ToString();
             textBox9.Text = z2.ToString();
@@ -1516,23 +1522,26 @@ namespace delta_robot
         public void run_multi_path()
         {
             //获取多段路径
-            var multi_path = whiteboard.get_multi_paths();
+            var multi_path = whiteboard.get_multi_paths();   //multi_path 2维数组 rows轨迹数量 cols包含轨迹点
             int path_num = multi_path.Count;
             List<int> distList = new List<int>();
 
-            Console.WriteLine("---开始运行---");
+            Console.WriteLine("------开始运行------");
 
             //获取每段路径点
             for (int i =0; i<path_num;i++)
             {
-                var coor = multi_path[i];
-                long[,] dist2D = new long[coor.Count+2, 3];
-                int[] dist = new int[dist2D.Length];
+
+                
+                var coor = multi_path[i];   //coor 一条轨迹中的所有点
+                long[,] dist2D = new long[coor.Count+2, 3];  //coor.Count 一条轨迹中点的数量 +3 抬笔 落笔 回零 (要删除)
+                                                             //dist2D 一个三维数组 点数个数*点坐标
+                int[] dist = new int[dist2D.GetLength(0)*dist2D.GetLength(1)];  //用于储存点
 
                 //获取第一个点
                 var (x0, y0, z0) = coor[0];
 
-                Console.WriteLine($"第{i+1}段轨迹");
+                Console.WriteLine($"---第{i+1}段轨迹---");
                 
 
                 //获取当前位置
@@ -1540,35 +1549,40 @@ namespace delta_robot
                 double y1 = Convert.ToDouble(textBox8.Text);
                 double z1 = Convert.ToDouble(textBox9.Text);
 
-                Console.WriteLine($" {x1} {y1} {z1}");
+                Console.WriteLine($" 当前位置 {x1} {y1} {z1}");
 
                 //z轴抬升
-                var (deltaT000Pulse, deltaT001Pulse, deltaT002Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x1, y1, z1-5);
+                var (deltaT000Pulse, deltaT001Pulse, deltaT002Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x1, y1, z1+5);
 
                 dist2D[0, 0] = deltaT000Pulse;
                 dist2D[0, 1] = deltaT001Pulse;
                 dist2D[0, 2] = deltaT002Pulse;
 
-                Console.WriteLine($" {x1} {y1} {z1+5}");
+                Console.WriteLine($" 抬笔 {x1} {y1} {z1+5}");
 
                 //移动到第一个点
-                var (deltaT010Pulse, deltaT011Pulse, deltaT012Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1-5, x0, y0, z1-5);
+                var (deltaT010Pulse, deltaT011Pulse, deltaT012Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1+5, x0, y0, z1+5);
 
                 dist2D[1,0] = deltaT010Pulse;
                 dist2D[1, 1]=deltaT011Pulse;
                 dist2D[1, 2] = deltaT012Pulse;
 
-                Console.WriteLine($" {x0} {y0} {z1 + 5}");
+                Console.WriteLine($" 第一个点 {x0} {y0} {z1 + 5}");
 
                 //落笔
-                var (deltaT020Pulse, deltaT021Pulse, deltaT022Pulse) = robotarm.CoordinateConvertPulse(x0, y0, z1 - 5, x0, y0, z1);
+                var (deltaT020Pulse, deltaT021Pulse, deltaT022Pulse) = robotarm.CoordinateConvertPulse(x0, y0, z1 + 5, x0, y0, z1);
 
                 dist2D[2, 0] = deltaT020Pulse;
                 dist2D[2, 1] = deltaT021Pulse;
                 dist2D[2, 2] = deltaT022Pulse;
 
                 Console.WriteLine("---落笔---");
-                Console.WriteLine($" {x0} {y0} {z1}");
+
+                Console.WriteLine($" 到达 {x0} {y0} {z1}");
+
+                
+
+                Console.WriteLine($"coor数{coor.Count}");
 
                 //后续点的轨迹
                 //通过for循环,计算后续点之间距离
@@ -1577,7 +1591,7 @@ namespace delta_robot
                     var (x01, y01, z01) = coor[j];
                     var (x02, y02, z02) = coor[j + 1];
 
-                    Console.WriteLine($" 第{j+1} {x01} {y01} {z1}");
+                    Console.WriteLine($" 到达 {x02} {y02} {z1}");
 
 
                     var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01, y01, z1, x02, y02, z1);
@@ -1588,10 +1602,20 @@ namespace delta_robot
                     dist2D[j + 3, 2] = deltaT2Pulse;
 
                 }
+                var (x2, y2, z2) = coor[coor.Count - 1];
+                //var (deltaT10Pulse, deltaT11Pulse, deltaT12Pulse) = robotarm.CoordinateConvertPulse(x2, y2, z1, 0,0, z1);
 
-                Console.WriteLine($"dist is {dist2D.Length}");
+                //dist2D[coor.Count + 2, 0] = deltaT10Pulse;
+                //dist2D[coor.Count + 2, 1] = deltaT11Pulse;
+                //dist2D[coor.Count + 2, 2] = deltaT12Pulse;
 
+                //Console.WriteLine("回到 0,0");
+                //Console.WriteLine($"dist2D is {dist2D.Length}");
 
+                //Console.WriteLine("--------------------");
+                //Console.WriteLine($"{dist2D.GetLength(0)}");
+                //Console.WriteLine($"{dist2D.GetLength(1)}");
+                //Console.WriteLine($"{dist.Length}");
                 for (int k = 0; k < dist2D.GetLength(0); k++)
                 {
                     for (int j = 0; j < dist2D.GetLength(1); j++)
@@ -1601,13 +1625,13 @@ namespace delta_robot
                 }
 
                 var rowCount = dist2D.GetLength(0);
-
-                var (x2, y2, z2) = coor[coor.Count - 1];
                 textBox7.Text = x2.ToString();
                 textBox8.Text = y2.ToString();
                 textBox9.Text = z1.ToString();
                 distList.AddRange(dist);
-                //Console.WriteLine($"dist is {dist}");
+
+
+                
 
             }
 
@@ -1638,7 +1662,7 @@ namespace delta_robot
             IMC_Pkg.PKG_IMC_SetPFIFOaccel(Global.g_handle, accel, fifo);    //插补加速度
 
 
-            double velmmPs = 10.00;
+            double velmmPs = 5.00;
             double velPulsePms = 72 * velmmPs / 1000 / 0.05625;     //窗口输入值 mm/s 转化成 pulse/ms
             double tgvel = velPulsePms;                             //目标速度
             double endvel = 0;                                      //末端速度
@@ -1650,6 +1674,14 @@ namespace delta_robot
             IMC_Pkg.PKG_IMC_MulLine_Dist(Global.g_handle, dist_all, axisnum, segNum, tgvel, endvel, wait, fifo);
 
 
+        }
+
+        private void button30_Click(object sender, EventArgs e)
+        {
+            //forward xyz 2 t123
+            Console.WriteLine($"{robotarm.ForwardKinematics(60,-60,-360)}");
+            //inverse t123 2 xyz
+            Console.WriteLine($"{robotarm.InverseKinematics(80,100,120)}");
         }
     }
 }

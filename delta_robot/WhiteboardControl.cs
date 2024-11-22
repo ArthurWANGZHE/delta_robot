@@ -192,6 +192,8 @@ namespace delta_robot
 
                 }
             }
+
+
             path_list.Add(index - 1);
             //Console.WriteLine($"ADD:{index - 1} {allPaths[index-1].Count}");
 
@@ -211,10 +213,10 @@ namespace delta_robot
                 Console.WriteLine($"----section{i+1}----");
                 List<(double x, double y, double z)> coordinates = new List<(double, double, double)>();
                 //获取第一个点保存到列表
-                double x = allPaths[path_list[i]][0].X / 2;
-                double y = allPaths[path_list[i]][0].Y / 2;
-                x = x - 85+10;
-                y = 85 - y;
+                double x = allPaths[path_list[i]][0].X / 4;
+                double y = allPaths[path_list[i]][0].Y / 4;
+                x = x - 40;
+                y = 40 - y;
                 coordinates.Add((x, y, 60));
                 Console.WriteLine($"ADD 1: {x} {y} {60}");
 
@@ -227,23 +229,25 @@ namespace delta_robot
                     var (x0, y0, z0) = coordinates[coordinates.Count - 1];
 
                     //获取当前点
-                    double x1 = allPaths[path_list[i]][j - 1].X / 2;
-                    double y1 = allPaths[path_list[i]][j - 1].Y / 2;
-                    x1 = x1 - 85 +10;
-                    y1 = 85 - y1;
+                    double x1 = allPaths[path_list[i]][j ].X / 4;
+                    double y1 = allPaths[path_list[i]][j ].Y / 4;
+                    x1 = x1 - 40;
+                    y1 = 40 - y1;
 
                     //计算两点之间的距离
                     double distance = Math.Sqrt(Math.Pow(x1 - x0, 2) + Math.Pow(y1 - y0, 2));
 
                     //对距离像进行判断 距离大于1则保存
-                    if (distance > 1)
+                    if (distance > 5)
                     {
                         coordinates.Add((x1, y1, 60));
 
                         Console.WriteLine($"ADD {j+1}: {x1} {y1} {60}");
                     }
+                    
  
                 }
+                Console.WriteLine($"坐标点数量{coordinates.Count}");
                 multi_paths_points.Add(coordinates);
                 //Console.WriteLine($" 轨迹数量 {multi_paths_points.Count}");
 
@@ -251,6 +255,7 @@ namespace delta_robot
 
             }
             //Console.WriteLine($" 轨迹数量 {multi_paths_points.Count}");
+            //Console.WriteLine($"{multi_paths_points}");
             return multi_paths_points;
         }
     }

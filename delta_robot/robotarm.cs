@@ -46,7 +46,7 @@ namespace Delta_10._31_
             double t2 = -z - Math.Sqrt(l * l - (x - R * Math.Sqrt(3) / 2) * (x - R * Math.Sqrt(3) / 2) - (R / 2 - y) * (R / 2 - y));
             double t1 = -z - Math.Sqrt(l * l - (Math.Sqrt(3) / 2 * R + x) * (Math.Sqrt(3) / 2 * R + x) - (R / 2 - y) * (R / 2 - y));
 
-            return (t1, t2, t3);
+            return (-t1, -t2, -t3);
         }
 
         //t123到xyz
@@ -327,7 +327,7 @@ namespace Delta_10._31_
             double deltaT2 = t2_2 - t2_1;
             double deltaT3 = t3_2 - t3_1;
 
-            int deltaT1Pulse = 1280 * (int)deltaT1;        //1600：丝杆导程为4mm，1mm对应90°，0.05625°对应一个脉冲，deltaT * 90 / 0.05625 = 1600
+            int deltaT1Pulse = 1280 * (int)deltaT1;        
             int deltaT2Pulse = 1280 * (int)deltaT2;
             int deltaT3Pulse = 1280 * (int)deltaT3;
 
