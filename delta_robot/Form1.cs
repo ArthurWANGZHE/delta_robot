@@ -1552,7 +1552,7 @@ namespace delta_robot
                 Console.WriteLine($" 当前位置 {x1} {y1} {z1}");
 
                 //z轴抬升
-                var (deltaT000Pulse, deltaT001Pulse, deltaT002Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1, x1, y1, z1+5);
+                var (deltaT000Pulse, deltaT001Pulse, deltaT002Pulse) = robotarm.CoordinateConvertPulse(x1 + 5 * i, y1, z1, x1 + 5 * i, y1, z1+8);
 
                 dist2D[0, 0] = deltaT000Pulse;
                 dist2D[0, 1] = deltaT001Pulse;
@@ -1561,7 +1561,7 @@ namespace delta_robot
                 Console.WriteLine($" 抬笔 {x1} {y1} {z1+5}");
 
                 //移动到第一个点
-                var (deltaT010Pulse, deltaT011Pulse, deltaT012Pulse) = robotarm.CoordinateConvertPulse(x1, y1, z1+5, x0, y0, z1+5);
+                var (deltaT010Pulse, deltaT011Pulse, deltaT012Pulse) = robotarm.CoordinateConvertPulse(x1 + 5 * i, y1, z1+8, x0 + 5 * i, y0, z1+8);
 
                 dist2D[1,0] = deltaT010Pulse;
                 dist2D[1, 1]=deltaT011Pulse;
@@ -1570,7 +1570,7 @@ namespace delta_robot
                 Console.WriteLine($" 第一个点 {x0} {y0} {z1 + 5}");
 
                 //落笔
-                var (deltaT020Pulse, deltaT021Pulse, deltaT022Pulse) = robotarm.CoordinateConvertPulse(x0, y0, z1 + 5, x0, y0, z1);
+                var (deltaT020Pulse, deltaT021Pulse, deltaT022Pulse) = robotarm.CoordinateConvertPulse(x0 + 5 * i, y0, z1+8, x0 + 5 * i, y0, z1);
 
                 dist2D[2, 0] = deltaT020Pulse;
                 dist2D[2, 1] = deltaT021Pulse;
@@ -1594,7 +1594,7 @@ namespace delta_robot
                     Console.WriteLine($" 到达 {x02} {y02} {z1}");
 
 
-                    var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01, y01, z1, x02, y02, z1);
+                    var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01+5*i, y01, z1, x02 + 5 * i, y02, z1);
 
                     //保存距离
                     dist2D[j + 3, 0] = deltaT0Pulse;
@@ -1662,7 +1662,7 @@ namespace delta_robot
             IMC_Pkg.PKG_IMC_SetPFIFOaccel(Global.g_handle, accel, fifo);    //插补加速度
 
 
-            double velmmPs = 5.00;
+            double velmmPs = 6.00;
             double velPulsePms = 72 * velmmPs / 1000 / 0.05625;     //窗口输入值 mm/s 转化成 pulse/ms
             double tgvel = velPulsePms;                             //目标速度
             double endvel = 0;                                      //末端速度
@@ -1676,12 +1676,167 @@ namespace delta_robot
 
         }
 
+        public void print_multi_path()
+        {
+            //获取多段路径
+            var multi_path = whiteboard.get_multi_paths();   //multi_path 2维数组 rows轨迹数量 cols包含轨迹点
+            int path_num = multi_path.Count;
+            List<int> distList = new List<int>();
+
+            Console.WriteLine("------开始运行------");
+
+            //获取每段路径点
+            for (int i = 0; i < path_num; i++)
+            {
+
+
+                var coor = multi_path[i];   //coor 一条轨迹中的所有点
+                long[,] dist2D = new long[coor.Count, 3];  //coor.Count 一条轨迹中点的数量 +3 抬笔 落笔 回零 (要删除)
+                                                               //dist2D 一个三维数组 点数个数*点坐标
+                int[] dist = new int[dist2D.GetLength(0) * dist2D.GetLength(1)];  //用于储存点
+
+                //获取第一个点
+                var (x0, y0, z0) = coor[0];
+
+                Console.WriteLine($"---第{i + 1}段轨迹---");
+
+
+                //获取当前位置
+                double x1 = Convert.ToDouble(textBox7.Text);
+                double y1 = Convert.ToDouble(textBox8.Text);
+                double z1 = Convert.ToDouble(textBox9.Text);
+
+                Console.WriteLine($" 当前位置 {x1} {y1} {z1}");
+
+
+                //移动到第一个点
+                var (deltaT010Pulse, deltaT011Pulse, deltaT012Pulse) = robotarm.CoordinateConvertPulse(x1 + 5 * i, y1, z1, x0 + 5 * i, y0, z1);
+
+                dist2D[1, 0] = deltaT010Pulse;
+                dist2D[1, 1] = deltaT011Pulse;
+                dist2D[1, 2] = deltaT012Pulse;
+
+                Console.WriteLine($" 第一个点 {x0} {y0} {z1 }");
+
+
+
+                Console.WriteLine($" 到达 {x0} {y0} {z1}");
+
+
+
+                Console.WriteLine($"coor数{coor.Count}");
+
+                //后续点的轨迹
+                //通过for循环,计算后续点之间距离
+                for (int j = 0; j < coor.Count - 1; j++)
+                {
+                    var (x01, y01, z01) = coor[j];
+                    var (x02, y02, z02) = coor[j + 1];
+
+                    Console.WriteLine($" 到达 {x02} {y02} {z1}");
+
+
+                    var (deltaT0Pulse, deltaT1Pulse, deltaT2Pulse) = robotarm.CoordinateConvertPulse(x01 + 5 * i, y01, z1, x02 + 5 * i, y02, z1);
+
+                    //保存距离
+                    dist2D[j + 3, 0] = deltaT0Pulse;
+                    dist2D[j + 3, 1] = deltaT1Pulse;
+                    dist2D[j + 3, 2] = deltaT2Pulse;
+
+                }
+                var (x2, y2, z2) = coor[coor.Count - 1];
+                //var (deltaT10Pulse, deltaT11Pulse, deltaT12Pulse) = robotarm.CoordinateConvertPulse(x2, y2, z1, 0,0, z1);
+
+                //dist2D[coor.Count + 2, 0] = deltaT10Pulse;
+                //dist2D[coor.Count + 2, 1] = deltaT11Pulse;
+                //dist2D[coor.Count + 2, 2] = deltaT12Pulse;
+
+                //Console.WriteLine("回到 0,0");
+                //Console.WriteLine($"dist2D is {dist2D.Length}");
+
+                //Console.WriteLine("--------------------");
+                //Console.WriteLine($"{dist2D.GetLength(0)}");
+                //Console.WriteLine($"{dist2D.GetLength(1)}");
+                //Console.WriteLine($"{dist.Length}");
+                for (int k = 0; k < dist2D.GetLength(0); k++)
+                {
+                    for (int j = 0; j < dist2D.GetLength(1); j++)
+                    {
+                        dist[k * dist2D.GetLength(1) + j] = (int)dist2D[k, j];
+                    }
+                }
+
+                var rowCount = dist2D.GetLength(0);
+                textBox7.Text = x2.ToString();
+                textBox8.Text = y2.ToString();
+                textBox9.Text = z1.ToString();
+                distList.AddRange(dist);
+
+
+
+
+            }
+
+
+
+            //将list转换为数组
+
+            int[] dist_all = distList.ToArray();
+
+
+            //执行多段轨迹插补
+
+            //多段轨迹插补
+            //启用插补空间
+            int[] axis = new int[] { 0, 1, 2 };
+            int axisnum = 3;
+            int fifo;
+            fifo = (int)FIFO_SEL.SEL_PFIFO1;
+
+            IMC_Pkg.PKG_IMC_PFIFOclear(Global.g_handle, fifo);              //清除插补空间中未被执行的插补指令
+            IMC_Pkg.PKG_IMC_AxisMap(Global.g_handle, axis, axisnum, fifo);  //轴映射
+            IMC_Pkg.PKG_IMC_PFIFOrun(Global.g_handle, fifo);                //启用插补空间
+
+            int mode = 0;
+            IMC_Pkg.PKG_IMC_SetPFIFOvelMode(Global.g_handle, mode, fifo);   //插补速度控制模式
+
+            int accel = 6;
+            IMC_Pkg.PKG_IMC_SetPFIFOaccel(Global.g_handle, accel, fifo);    //插补加速度
+
+
+            double velmmPs = 6.00;
+            double velPulsePms = 72 * velmmPs / 1000 / 0.05625;     //窗口输入值 mm/s 转化成 pulse/ms
+            double tgvel = velPulsePms;                             //目标速度
+            double endvel = 0;                                      //末端速度
+
+            int wait = 0;
+            int segNum = dist_all.Length / 3;
+            Console.WriteLine($"segNum {segNum}");
+
+            IMC_Pkg.PKG_IMC_MulLine_Dist(Global.g_handle, dist_all, axisnum, segNum, tgvel, endvel, wait, fifo);
+
+
+        }
+
         private void button30_Click(object sender, EventArgs e)
         {
-            //forward xyz 2 t123
-            Console.WriteLine($"{robotarm.ForwardKinematics(60,-60,-360)}");
-            //inverse t123 2 xyz
-            Console.WriteLine($"{robotarm.InverseKinematics(80,100,120)}");
+        }
+
+        private void button30_Click_1(object sender, EventArgs e)
+        {
+            run_multi_path();
+
+        }
+
+        private void button31_Click(object sender, EventArgs e)
+        {
+            run_multi_path();
+        }
+
+        private void button32_Click(object sender, EventArgs e)
+        {
+            print_multi_path();
+
         }
     }
 }

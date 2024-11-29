@@ -215,7 +215,7 @@ namespace delta_robot
                 //获取第一个点保存到列表
                 double x = allPaths[path_list[i]][0].X / 4;
                 double y = allPaths[path_list[i]][0].Y / 4;
-                x = x - 40;
+                x = x - 35;
                 y = 40 - y;
                 coordinates.Add((x, y, 60));
                 Console.WriteLine($"ADD 1: {x} {y} {60}");
@@ -231,7 +231,7 @@ namespace delta_robot
                     //获取当前点
                     double x1 = allPaths[path_list[i]][j ].X / 4;
                     double y1 = allPaths[path_list[i]][j ].Y / 4;
-                    x1 = x1 - 40;
+                    x1 = x1 - 35;
                     y1 = 40 - y1;
 
                     //计算两点之间的距离
